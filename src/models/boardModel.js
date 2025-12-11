@@ -19,6 +19,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
 
   createAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
+  // chỉ xóa phía người dùng, hệ thống vẫn còn
   _destroy: Joi.boolean().default(false)
 })
 
