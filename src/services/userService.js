@@ -4,6 +4,8 @@ import { userModel } from '~/models/userModel'
 import bcrypt from 'bcryptjs'
 import { v4 as uuidv4 } from 'uuid'
 import { pickUser } from '~/utils/formatter'
+import { WEBSITE_DOMAINS } from '~/utils/constants'
+import { brevoProvider } from '~/providers/BrevoProvider'
 
 const createNew = async (reqBody) => {
   try {
@@ -29,6 +31,15 @@ const createNew = async (reqBody) => {
     const getUser = await userModel.findOneById(createdUser.insertedId)
 
     // gửi email xác thực cho user
+    const verifiCationLink = `${WEBSITE_DOMAINS}/account/verification?email=${getUser.email}&token=${getUser.verifyToken}`
+    const customSubject = 'Verify your email address'
+    const htmlContent = `
+      <h3>Verify your email address</h3>
+      <h3>${verifiCationLink}</h3>
+    `
+
+    // gọi tới provider gửi email
+    await brevoProvider.sendEmail(getUser.email, customSubject, htmlContent)
 
     // trả về phía controller
     return pickUser(getUser)
