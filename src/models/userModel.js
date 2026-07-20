@@ -2,7 +2,6 @@ import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { GET_DB } from '~/config/mongodb'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from '~/utils/validators'
-import { BOARD_COLLECTION_NAME } from './boardModel'
 
 // Define tạm 2 roles cho user, tùy việc mở rộng dự án như thế nào mà mọi người có thể thêm role tùy cho phù hợp sau.
 const USER_ROLES = {
@@ -58,7 +57,7 @@ const findOneByEmail = async (emailValue) => {
   } catch (error) { throw new Error(error) }
 }
 
-const update = async (boardId, updateData) => {
+const update = async (userId, updateData) => {
   try {
     // Lọc những field mà chúng ta không cho phép cập nhật linh tinh
     Object.keys(updateData).forEach(fieldName => {
@@ -67,13 +66,8 @@ const update = async (boardId, updateData) => {
       }
     })
 
-    // Đối với những dữ liệu liên quan ObjectId, biến đổi ở đây
-    if (updateData.columnOrderIds) {
-      updateData.columnOrderIds = updateData.columnOrderIds.map(_id => (new ObjectId(_id)))
-    }
-
-    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
-      { _id: new ObjectId(boardId) },
+    const result = await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(userId) },
       { $set: updateData },
       { returnDocument: 'after' } // sẽ trả về kết quả mới sau khi cập nhật
     )
