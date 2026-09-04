@@ -9,6 +9,7 @@ import { brevoProvider } from '~/providers/BrevoProvider'
 import { jwtProvider } from '~/providers/JwtProvider'
 import { env } from '~/config/environment'
 import JwtProvider from '~/providers/JwtProvider'
+import { cloudinaryProvider } from '~/providers/CloundinaryProvider'
 
 const createNew = async (reqBody) => {
   try {
@@ -127,7 +128,7 @@ const refreshToken = async (clientRefreshToken) => {
   } catch (error) { throw error }
 }
 
-const update = async(userId, reqBody) => {
+const update = async(userId, reqBody, userAvatarFile) => {
   try {
     // Query User và kiểm tra cho chắc chắn
     const existUser = await userModel.findOneById(userId)
@@ -145,7 +146,16 @@ const update = async(userId, reqBody) => {
       }
       // Nếu đúng thì tiến hành update password mới
       updatedUser = await userModel.update(existUser._id, { password: bcrypt.hashSync(reqBody.new_password, 8) })
-    } else {
+    } else if (userAvatarFile) {
+      // upload avatar file on cloudinary
+      const uploadResult = await cloudinaryProvider.streamUpload(userAvatarFile.buffer, 'trello-users')
+      // console.log('uploadResult', uploadResult)
+
+      //  save avatar url to database
+      updatedUser = await userModel.update(existUser._id, { avatar: uploadResult.secure_url })
+
+    }
+    else {
       // Trường hợp update thông tin chung chung (displayName, username, avatar, ...)
       updatedUser = await userModel.update(existUser._id, reqBody)
     }
