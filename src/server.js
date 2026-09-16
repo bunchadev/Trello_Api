@@ -26,6 +26,11 @@ const START_SERVER = () => {
 
   app.use('/v1', APIs_V1)
 
+  // API trả về cho UptimeRobot để check health (tránh lỗi 404)
+  app.get('/', (req, res) => {
+    res.status(200).json({ message: 'API is running!' })
+  })
+
   // midleware xử lý lỗi tập chung
   app.use(errorHandlingMiddleware)
 
