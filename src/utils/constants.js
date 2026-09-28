@@ -13,3 +13,6 @@ export const BOARD_TYPES = {
 }
 
 export const WEBSITE_DOMAINS = (env.BUILD_MODE === 'dev') ? env.WEBSITE_DOMAIN_DEVELOPMENT : env.WEBSITE_DOMAIN_PRODUCTION
+
+export const DEFAULT_PAGE = 1
+export const DEFAULT_ITEMS_PER_PAGE = 12
