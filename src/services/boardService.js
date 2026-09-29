@@ -7,7 +7,7 @@ import { columnModel } from '~/models/columnModel'
 import { cardModel } from '~/models/cardModel'
 import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
 
-const createNew = async (reqBody) => {
+const createNew = async (userId, reqBody) => {
   // eslint-disable-next-line no-useless-catch
   try {
     // xử lý logic dữ liệu tùy đặc thù dự án
@@ -17,7 +17,7 @@ const createNew = async (reqBody) => {
     }
 
     // gọi tới tâng Model để xử lý lưu bản ghi newBoard vào trong database
-    const createBoard = await boardModel.createNew(newBoard)
+    const createBoard = await boardModel.createNew(userId, newBoard)
     // eslint-disable-next-line no-console
     console.log(createBoard)
 
@@ -31,10 +31,10 @@ const createNew = async (reqBody) => {
   } catch (error) { throw error }
 }
 
-const getDetails = async (boardId) => {
+const getDetails = async (userId, boardId) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const board = await boardModel.getDetails(boardId)
+    const board = await boardModel.getDetails(userId, boardId)
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
